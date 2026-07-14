@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-03.schema.json",
+  "title": "agentx Agent Platform Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 03 - Agent Platform. Covers AgentResult and AgentRole.",
+  "type": "object",
+  "definitions": {
+    "AgentRole": {
+      "type": "string",
+      "enum": [
+        "coding",
+        "review",
+        "test",
+        "security"
+      ]
+    },
+    "AgentResult": {
+      "type": "object",
+      "required": [
+        "taskId",
+        "role",
+        "output",
+        "toolCallsMade",
+        "requiresApproval"
+      ],
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "role": {
+          "$ref": "#/definitions/AgentRole"
+        },
+        "output": {
+          "type": "string"
+        },
+        "toolCallsMade": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "requiresApproval": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

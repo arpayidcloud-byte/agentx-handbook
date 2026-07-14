@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-12.schema.json",
+  "title": "agentx Portfolio & Cross-Task Orchestration Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 12 - Portfolio. Covers Portfolio and OrgBudget.",
+  "type": "object",
+  "definitions": {
+    "Portfolio": {
+      "type": "object",
+      "required": [
+        "orgId",
+        "projectGraphs"
+      ],
+      "properties": {
+        "orgId": {
+          "type": "string"
+        },
+        "projectGraphs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "OrgBudget": {
+      "type": "object",
+      "required": [
+        "orgId",
+        "monthlyCeilingUsd",
+        "currentSpendUsd"
+      ],
+      "properties": {
+        "orgId": {
+          "type": "string"
+        },
+        "monthlyCeilingUsd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "currentSpendUsd": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

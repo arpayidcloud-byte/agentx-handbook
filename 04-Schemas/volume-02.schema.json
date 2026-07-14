@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-02.schema.json",
+  "title": "agentx Core Runtime Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 02 — Core Runtime. Covers Task, EventEnvelope, event payloads, Decomposition, RetryPolicy, and SchedulerConfig.",
+  "type": "object",
+  "definitions": {
+    "TaskState": {
+      "type": "string",
+      "enum": ["Queued", "Planning", "AwaitingApproval", "Running", "Completed", "Failed", "Cancelled"],
+      "description": "Lifecycle states of a task within the Core Runtime scheduler."
+    },
+    "Task": {
+      "type": "object",
+      "description": "A unit of work tracked by the Orchestrator from creation through completion.",
+      "required": ["id", "goal", "state", "assignedAgentRole", "dependsOn", "requiresApproval", "createdAt", "updatedAt", "traceId"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique task identifier."
+        },
+        "goal": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000,
+          "description": "Natural-language goal describing what the task must accomplish."
+        },
+        "state": {
+          "$ref": "#/definitions/TaskState"
+        },
+        "assignedAgentRole": {
+          "type": ["string", "null"],
+          "description": "Role identifier of the agent assigned to execute this task, or null if unassigned."
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": { "type": "string", "format": "uuid" },
+          "default": [],
+          "description": "List of task IDs that must complete before this task can begin."
+        },
+        "requiresApproval": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether this task requires explicit operator approval before execution."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when the task was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of the last state transition."
+        },
+        "traceId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Distributed trace ID correlating all events for this task."
+        }
+      }
+    },
+    "EventEnvelope": {
+      "type": "object",
+      "description": "Wraps every domain event published on the Memory Engine event bus.",
+      "required": ["id", "topic", "timestamp", "traceId", "payload", "sourceModule"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "topic": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[a-z]+\\.[a-z]+(\\.[a-z]+)*$",
+          "description": "Dot-namespaced event topic (e.g. task.created, task.state-changed)."
+        },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "traceId": { "type": "string", "format": "uuid" },
+        "payload": { "type": "object", "description": "Event-specific payload body." },
+        "sourceModule": {
+          "type": "string",
+          "description": "Module that published the event (e.g. orchestrator, agent-platform)."
+        }
+      }
+    },
+    "TaskCreatedEvent": {
+      "allOf": [
+        { "$ref": "#/definitions/EventEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "topic": { "const": "task.created" },
+            "payload": { "$ref": "#/definitions/Task" }
+          }
+        }
+      ]
+    },
+    "TaskStateChangedEvent": {
+      "allOf": [
+        { "$ref": "#/definitions/EventEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "topic": { "const": "task.state-changed" },
+            "payload": {
+              "type": "object",
+              "required": ["taskId", "previousState", "newState"],
+              "properties": {
+                "taskId": { "type": "string", "format": "uuid" },
+                "previousState": { "$ref": "#/definitions/TaskState" },
+                "newState": { "$ref": "#/definitions/TaskState" }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ApprovalRequiredEvent": {
+      "allOf": [
+        { "$ref": "#/definitions/EventEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "topic": { "const": "approval.required" },
+            "payload": {
+              "type": "object",
+              "required": ["taskId", "agentRole", "reason", "toolName"],
+              "properties": {
+                "taskId": { "type": "string", "format": "uuid" },
+                "agentRole": { "type": "string" },
+                "reason": { "type": "string" },
+                "toolName": { "type": "string" }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ApprovalResolvedEvent": {
+      "allOf": [
+        { "$ref": "#/definitions/EventEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "topic": { "const": "approval.resolved" },
+            "payload": {
+              "type": "object",
+              "required": ["taskId", "decision"],
+              "properties": {
+                "taskId": { "type": "string", "format": "uuid" },
+                "decision": { "type": "string", "enum": ["Approved", "Rejected"] }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ToolInvokedEvent": {
+      "allOf": [
+        { "$ref": "#/definitions/EventEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "topic": { "const": "tool.invoked" },
+            "payload": {
+              "type": "object",
+              "required": ["taskId", "toolName", "arguments", "result"],
+              "properties": {
+                "taskId": { "type": "string", "format": "uuid" },
+                "toolName": { "type": "string" },
+                "arguments": { "type": "object" },
+                "result": { "type": ["string", "null"] }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ProviderCallEvent": {
+      "allOf": [
+        { "$ref": "#/definitions/EventEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "topic": { "const": "provider.called" },
+            "payload": {
+              "type": "object",
+              "required": ["taskId", "providerId", "modelId", "latencyMs", "success"],
+              "properties": {
+                "taskId": { "type": "string", "format": "uuid" },
+                "providerId": { "type": "string" },
+                "modelId": { "type": "string" },
+                "latencyMs": { "type": "integer", "minimum": 0 },
+                "success": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "DecompositionRequest": {
+      "type": "object",
+      "required": ["taskId", "goal"],
+      "properties": {
+        "taskId": { "type": "string", "format": "uuid" },
+        "goal": { "type": "string", "minLength": 1 }
+      }
+    },
+    "DecomposedTask": {
+      "type": "object",
+      "required": ["id", "goal", "dependsOn", "requiresApproval"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "goal": { "type": "string", "minLength": 1 },
+        "dependsOn": { "type": "array", "items": { "type": "string", "format": "uuid" }, "default": [] },
+        "requiresApproval": { "type": "boolean", "default": false }
+      }
+    },
+    "DecompositionResult": {
+      "type": "object",
+      "required": ["parentTaskId", "subtasks"],
+      "properties": {
+        "parentTaskId": { "type": "string", "format": "uuid" },
+        "subtasks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/DecomposedTask" },
+          "minItems": 1
+        }
+      }
+    },
+    "RetryPolicy": {
+      "type": "object",
+      "description": "Exponential backoff retry configuration for provider calls and task execution.",
+      "required": ["maxAttempts", "backoffMultiplier", "initialDelayMs"],
+      "properties": {
+        "maxAttempts": { "type": "integer", "minimum": 1, "maximum": 10, "default": 3 },
+        "backoffMultiplier": { "type": "number", "minimum": 1.0, "maximum": 5.0, "default": 2.0 },
+        "initialDelayMs": { "type": "integer", "minimum": 100, "maximum": 30000, "default": 1000 }
+      }
+    },
+    "SchedulerConfig": {
+      "type": "object",
+      "description": "Global scheduler tuning parameters.",
+      "required": ["maxConcurrentTaskGraphs", "maxParallelAgents"],
+      "properties": {
+        "maxConcurrentTaskGraphs": { "type": "integer", "minimum": 1, "maximum": 50, "default": 5 },
+        "maxParallelAgents": { "type": "integer", "minimum": 1, "maximum": 100, "default": 10 }
+      }
+    }
+  }
+}

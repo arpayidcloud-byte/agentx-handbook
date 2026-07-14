@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-11.schema.json",
+  "title": "agentx Deployment Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 11 - Deployment & Infrastructure. Covers the managed-service/self-hosted-fallback table (Ch. 2).",
+  "type": "object",
+  "definitions": {
+    "ManagedServiceEntry": {
+      "type": "object",
+      "required": [
+        "service",
+        "selfHostedFallback"
+      ],
+      "properties": {
+        "service": {
+          "type": "string"
+        },
+        "selfHostedFallback": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Per FR-1, this MUST be non-empty for every row."
+        }
+      }
+    }
+  }
+}

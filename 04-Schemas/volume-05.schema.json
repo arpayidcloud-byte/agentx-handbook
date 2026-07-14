@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-05.schema.json",
+  "title": "agentx Workflow Engine Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 05 - Workflow Engine. Covers TaskGraph and WorkflowPolicy.",
+  "type": "object",
+  "definitions": {
+    "TaskGraphNode": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "policyGated": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "TaskGraph": {
+      "type": "object",
+      "required": [
+        "nodes",
+        "edges"
+      ],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TaskGraphNode"
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "from",
+              "to"
+            ],
+            "properties": {
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "WorkflowPolicy": {
+      "type": "object",
+      "properties": {
+        "maxCostUsd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "retryCap": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

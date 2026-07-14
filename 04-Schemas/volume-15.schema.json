@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-15.schema.json",
+  "title": "agentx Identity & Access Foundation Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 15 - Identity & Access Foundation. Covers Identity and AuthContext.",
+  "type": "object",
+  "definitions": {
+    "AuthMode": {
+      "type": "string",
+      "enum": [
+        "local",
+        "token",
+        "sso"
+      ]
+    },
+    "Identity": {
+      "type": "object",
+      "required": [
+        "id",
+        "externalId",
+        "authMode",
+        "roles",
+        "metadata"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "externalId": {
+          "type": "string"
+        },
+        "authMode": {
+          "$ref": "#/definitions/AuthMode"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "required": [
+            "mfaVerified",
+            "authenticatedAt"
+          ],
+          "properties": {
+            "tenantId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "groups": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "mfaVerified": {
+              "type": "boolean"
+            },
+            "authenticatedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "issuer": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

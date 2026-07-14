@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-14.schema.json",
+  "title": "agentx Quality Gates & CI Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 14 - Quality Gates. Covers GoldenSetCase and GoldenSetResult.",
+  "type": "object",
+  "definitions": {
+    "GoldenSetCase": {
+      "type": "object",
+      "required": [
+        "id",
+        "goal",
+        "rubric"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "goal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rubric": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "criterion",
+              "required"
+            ],
+            "properties": {
+              "criterion": {
+                "type": "string"
+              },
+              "required": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "GoldenSetResult": {
+      "type": "object",
+      "required": [
+        "caseId",
+        "passed",
+        "failedCriteria"
+      ],
+      "properties": {
+        "caseId": {
+          "type": "string"
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "failedCriteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

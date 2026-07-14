@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-06.schema.json",
+  "title": "agentx Memory Engine Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 06 - Memory Engine. Covers TaskContext and Persistence-related payloads.",
+  "type": "object",
+  "definitions": {
+    "TaskContext": {
+      "type": "object",
+      "required": [
+        "taskId",
+        "recentEvents"
+      ],
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "recentEvents": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Bounded last-N events, per FR-2"
+        },
+        "summary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Summary of older events beyond the last-N window"
+        }
+      }
+    },
+    "AuditEvent": {
+      "type": "object",
+      "required": [
+        "id",
+        "occurredAt",
+        "actor",
+        "action"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "occurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "actor": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "details": {
+          "type": "object"
+        }
+      },
+      "description": "Append-only per FR-3 and ADR-0014; no update/delete fields defined."
+    }
+  }
+}

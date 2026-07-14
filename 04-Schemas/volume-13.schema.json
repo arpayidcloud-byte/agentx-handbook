@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-13.schema.json",
+  "title": "agentx Observability & SRE Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 13 - Observability. Covers MetricsQuery.",
+  "type": "object",
+  "definitions": {
+    "MetricName": {
+      "type": "string",
+      "enum": [
+        "task.duration_ms",
+        "provider.cost_usd",
+        "provider.latency_ms",
+        "tool.failure_rate"
+      ]
+    },
+    "GroupBy": {
+      "type": "string",
+      "enum": [
+        "agentRole",
+        "provider",
+        "toolCategory"
+      ]
+    },
+    "MetricsQuery": {
+      "type": "object",
+      "required": [
+        "metric",
+        "range"
+      ],
+      "properties": {
+        "metric": {
+          "$ref": "#/definitions/MetricName"
+        },
+        "groupBy": {
+          "$ref": "#/definitions/GroupBy"
+        },
+        "range": {
+          "type": "object",
+          "required": [
+            "from",
+            "to"
+          ],
+          "properties": {
+            "from": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "to": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      }
+    }
+  }
+}

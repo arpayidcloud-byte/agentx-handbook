@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-08.schema.json",
+  "title": "agentx Plugin System Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 08 - Plugin System. Covers PluginManifest.",
+  "type": "object",
+  "definitions": {
+    "ToolCategory": {
+      "type": "string"
+    },
+    "PluginManifest": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "kind",
+        "entryPoint"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "agent",
+            "tool",
+            "provider"
+          ]
+        },
+        "declaredToolCategories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ToolCategory"
+          }
+        },
+        "declaredAgentRole": {
+          "type": "string"
+        },
+        "entryPoint": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "tool"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "declaredToolCategories"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "agent"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "declaredAgentRole"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

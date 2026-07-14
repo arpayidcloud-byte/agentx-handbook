@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-04.schema.json",
+  "title": "agentx Provider Platform Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 04 — Provider Platform. Covers CompletionRequest, CompletionResponse, Provider interface, NormalizedToolSpec, NormalizedToolCall, CredentialResolverConfig, and ProviderCostEntry.",
+  "definitions": {
+    "CompletionRequest": {
+      "type": "object",
+      "description": "Canonical request dispatched to a provider adapter for LLM completion.",
+      "required": ["systemPrompt", "userPrompt"],
+      "properties": {
+        "systemPrompt": {
+          "type": "string",
+          "minLength": 1,
+          "description": "System-level instructions sent to the LLM."
+        },
+        "userPrompt": {
+          "type": "string",
+          "minLength": 1,
+          "description": "User-level message or task context for the LLM."
+        },
+        "context": {
+          "type": "array",
+          "items": { "type": "object" },
+          "description": "Optional conversation history or contextual messages."
+        },
+        "tools": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/NormalizedToolSpec" },
+          "description": "Tools available for the LLM to invoke during completion."
+        },
+        "maxTokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128000,
+          "description": "Maximum tokens for the completion response."
+        }
+      }
+    },
+    "CompletionResponse": {
+      "type": "object",
+      "description": "Normalized response returned from any provider adapter.",
+      "required": ["text", "toolCalls", "usage", "providerId", "latencyMs"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Generated text content from the LLM."
+        },
+        "toolCalls": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/NormalizedToolCall" },
+          "description": "Tool invocations requested by the LLM."
+        },
+        "usage": {
+          "$ref": "#/definitions/TokenUsage"
+        },
+        "providerId": {
+          "type": "string",
+          "description": "Identifier of the provider that served the request."
+        },
+        "latencyMs": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "End-to-end latency in milliseconds."
+        }
+      }
+    },
+    "TokenUsage": {
+      "type": "object",
+      "required": ["inputTokens", "outputTokens"],
+      "properties": {
+        "inputTokens": { "type": "integer", "minimum": 0 },
+        "outputTokens": { "type": "integer", "minimum": 0 },
+        "totalTokens": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "Provider": {
+      "type": "object",
+      "description": "Provider adapter interface definition — each provider must implement these capabilities.",
+      "required": ["id", "name", "supportedModels", "capabilities"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "description": "Unique provider identifier (e.g. openai, anthropic, ollama)."
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable provider name."
+        },
+        "supportedModels": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "List of model IDs this provider supports."
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["completion", "chat", "embedding", "tool-use", "streaming", "vision"]
+          },
+          "description": "Capabilities supported by this provider."
+        },
+        "healthStatus": {
+          "type": "string",
+          "enum": ["healthy", "degraded", "unhealthy", "unknown"],
+          "default": "unknown"
+        }
+      }
+    },
+    "NormalizedToolSpec": {
+      "type": "object",
+      "description": "Provider-agnostic tool specification forwarded to the LLM.",
+      "required": ["name", "description", "parameters"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$",
+          "description": "Canonical tool name."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable description of the tool's purpose."
+        },
+        "parameters": {
+          "type": "object",
+          "description": "JSON Schema object describing the tool's input parameters."
+        }
+      }
+    },
+    "NormalizedToolCall": {
+      "type": "object",
+      "description": "A tool invocation requested by the LLM, normalized across providers.",
+      "required": ["toolName", "arguments", "callId"],
+      "properties": {
+        "toolName": { "type": "string", "description": "Name of the tool to invoke." },
+        "arguments": {
+          "type": "object",
+          "description": "Arguments to pass to the tool, matching the tool's parameter schema."
+        },
+        "callId": {
+          "type": "string",
+          "description": "Unique call identifier for correlating the tool result back to the LLM."
+        }
+      }
+    },
+    "CredentialResolverConfig": {
+      "type": "object",
+      "description": "Configuration for resolving provider credentials at runtime.",
+      "required": ["providerId", "resolutionStrategy"],
+      "properties": {
+        "providerId": { "type": "string" },
+        "resolutionStrategy": {
+          "type": "string",
+          "enum": ["env-var", "vault", "inline", "file"],
+          "description": "How credentials are resolved: environment variable, vault service, inline config, or file path."
+        },
+        "envVarName": {
+          "type": "string",
+          "description": "Environment variable name when strategy is env-var."
+        },
+        "vaultPath": {
+          "type": "string",
+          "description": "Vault secret path when strategy is vault."
+        },
+        "filePath": {
+          "type": "string",
+          "description": "Path to credential file when strategy is file."
+        }
+      }
+    },
+    "ProviderCostEntry": {
+      "type": "object",
+      "description": "Cost tracking entry for provider billing and budget enforcement.",
+      "required": ["providerId", "modelId", "inputCostPer1k", "outputCostPer1k", "currency"],
+      "properties": {
+        "providerId": { "type": "string" },
+        "modelId": { "type": "string" },
+        "inputCostPer1k": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Cost per 1,000 input tokens."
+        },
+        "outputCostPer1k": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Cost per 1,000 output tokens."
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "description": "ISO 4217 currency code (e.g. USD, EUR)."
+        }
+      }
+    }
+  }
+}

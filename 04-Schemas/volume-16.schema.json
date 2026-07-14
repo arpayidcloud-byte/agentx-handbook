@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-16.schema.json",
+  "title": "agentx Secrets & Key Management Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 16 - Secrets & Key Management. Covers SecretEntry and SecretAccessEvent.",
+  "type": "object",
+  "definitions": {
+    "SecretEntry": {
+      "type": "object",
+      "required": [
+        "value",
+        "version"
+      ],
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "SecretAccessEvent": {
+      "type": "object",
+      "required": [
+        "operation",
+        "key",
+        "success",
+        "occurredAt"
+      ],
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get",
+            "set",
+            "delete",
+            "resolve"
+          ]
+        },
+        "key": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "occurredAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "description": "Per FR-4, must never include the raw secret value."
+    }
+  }
+}

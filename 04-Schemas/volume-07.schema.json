@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-07.schema.json",
+  "title": "agentx Tool SDK Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 07 — Tool SDK. Covers Tool, ToolCategory, ToolCallContext, ToolResult, PermissionCheckRequest, PermissionCheckResult, and DestructiveClassification.",
+  "definitions": {
+    "ToolCategory": {
+      "type": "string",
+      "enum": ["fs.read", "fs.write", "shell.build", "shell.exec", "git.read", "git.write"],
+      "description": "Classification of tool by domain and risk level. Write/exec categories require approval."
+    },
+    "Tool": {
+      "type": "object",
+      "description": "A tool registered with the Tool SDK, available for agent invocation.",
+      "required": ["name", "category", "isDestructive"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$",
+          "description": "Canonical tool name, unique within the SDK registry."
+        },
+        "category": {
+          "$ref": "#/definitions/ToolCategory"
+        },
+        "isDestructive": {
+          "type": "boolean",
+          "description": "Whether this tool can cause irreversible side effects. Destructive tools require operator approval."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the tool."
+        },
+        "parameters": {
+          "type": "object",
+          "description": "JSON Schema describing the tool's input parameters."
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Semantic version of the tool implementation."
+        }
+      }
+    },
+    "ToolCallContext": {
+      "type": "object",
+      "description": "Execution context passed to every tool invocation, enabling audit and access control.",
+      "required": ["agentRole", "taskId", "workingDirectory"],
+      "properties": {
+        "agentRole": {
+          "type": "string",
+          "description": "Role of the agent requesting the tool execution."
+        },
+        "taskId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "ID of the parent task that triggered this tool call."
+        },
+        "workingDirectory": {
+          "type": "string",
+          "description": "Absolute path of the working directory for the tool execution."
+        },
+        "traceId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Distributed trace ID for observability correlation."
+        }
+      }
+    },
+    "ToolResult": {
+      "type": "object",
+      "description": "Standardized result returned by every tool execution.",
+      "required": ["success", "output"],
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether the tool execution completed without error."
+        },
+        "output": {
+          "type": "string",
+          "description": "Textual output or data produced by the tool."
+        },
+        "error": {
+          "type": ["string", "null"],
+          "description": "Error message if the tool execution failed."
+        },
+        "exitCode": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Process exit code for shell-based tools."
+        },
+        "durationMs": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Execution duration in milliseconds."
+        }
+      }
+    },
+    "PermissionCheckRequest": {
+      "type": "object",
+      "description": "Request submitted to the permission guard before a tool is executed.",
+      "required": ["agentRole", "category"],
+      "properties": {
+        "agentRole": {
+          "type": "string",
+          "description": "Role of the agent requesting permission."
+        },
+        "category": {
+          "$ref": "#/definitions/ToolCategory"
+        },
+        "toolName": {
+          "type": "string",
+          "description": "Name of the specific tool being invoked."
+        }
+      }
+    },
+    "PermissionCheckResult": {
+      "type": "object",
+      "description": "Result of a permission check — determines if the tool call proceeds or is blocked.",
+      "required": ["allowed"],
+      "properties": {
+        "allowed": {
+          "type": "boolean",
+          "description": "Whether the tool invocation is permitted."
+        },
+        "reason": {
+          "type": ["string", "null"],
+          "description": "Human-readable explanation if the call was denied."
+        }
+      }
+    },
+    "DestructiveClassification": {
+      "type": "object",
+      "description": "Static classification of a tool's destructive potential, computed at registration time.",
+      "required": ["toolName", "category", "isDestructive", "rationale"],
+      "properties": {
+        "toolName": {
+          "type": "string",
+          "description": "Name of the classified tool."
+        },
+        "category": {
+          "$ref": "#/definitions/ToolCategory"
+        },
+        "isDestructive": {
+          "type": "boolean",
+          "description": "Whether this tool is classified as destructive."
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Explanation for why the tool is or is not classified as destructive."
+        }
+      }
+    }
+  }
+}

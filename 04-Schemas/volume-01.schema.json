@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-01.schema.json",
+  "title": "agentx Foundation Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 01 - Foundation. Covers HandbookDocument metadata.",
+  "type": "object",
+  "definitions": {
+    "DocStatus": {
+      "type": "string",
+      "enum": [
+        "Draft",
+        "In Review",
+        "Approved",
+        "Accepted",
+        "Final",
+        "Superseded",
+        "Withdrawn"
+      ]
+    },
+    "HandbookDocument": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "status",
+        "dependsOn"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(Volume-\\d{2}|RFC-\\d{4}|ADR-\\d{4})$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/definitions/DocStatus"
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "supersededBy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

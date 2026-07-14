@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentx.dev/schemas/volume-10.schema.json",
+  "title": "agentx Multi-Tenant & Policy Engine Schemas",
+  "description": "Machine-validatable JSON Schema contracts for Volume 10 - Multi-Tenant & Policy Engine. Covers OrgPolicy config.",
+  "type": "object",
+  "definitions": {
+    "Severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "OrgPolicyConfig": {
+      "type": "object",
+      "required": [
+        "blockOnSeverityAtOrAbove"
+      ],
+      "properties": {
+        "blockOnSeverityAtOrAbove": {
+          "$ref": "#/definitions/Severity",
+          "default": "critical"
+        }
+      },
+      "description": "Config-level representation of OrgPolicy.blockOnSecurityFinding; default recommendation per Ch. 3 is 'critical' only."
+    }
+  }
+}
