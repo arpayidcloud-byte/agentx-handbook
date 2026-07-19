@@ -176,3 +176,21 @@ $ agentx submit "Refactor auth module and push to remote"
 
 This Volume completes the v0.1 critical path (Volumes 1–9). Volumes 10–12 below cover
 explicitly post-v0.1 concerns per Volume 1's own roadmap notes.
+
+## Observability Requirements
+
+### Metrics
+- CLI command execution time (p50, p95) — latency from command invocation to output rendering
+- Command invocation frequency — which CLI commands are used most by developers
+- Interactive session duration — time users spend in approval-gate interactive flows
+- CLI error rate — percentage of command invocations that result in user-visible errors
+- Output rendering time — time to format and display command results (tables, progress bars)
+
+### Logging
+- Log every CLI command invocation with command name, arguments (sanitized), and exit code
+- Log approval-gate interactions with sessionId, gateId, and user action (approve/reject)
+- Log CLI configuration changes (profile switches, endpoint URL changes)
+
+### Alerting
+- Alert if CLI error rate exceeds 5% for any command over a 1-hour window
+- Alert if approval-gate interactive session exceeds 30 minutes (user may be stuck)

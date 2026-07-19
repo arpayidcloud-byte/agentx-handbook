@@ -184,3 +184,21 @@ interface GoldenSetResult {
 This is the final Volume. With Volumes 1–14 drafted, the handbook's core specification is
 now complete pending Project Owner review — see the consolidated summary at the end of
 this delivery for what happens next.
+
+## Observability Requirements
+
+### Metrics
+- Test suite execution time (p50, p95) — total CI test duration per package
+- Contract test pass rate — percentage of contract tests passing across all packages
+- Mutation testing score — percentage of mutations caught by the test suite per package
+- CI gate failure rate — frequency of quality gate rejections per PR
+- Test coverage trend — line and branch coverage percentage over time per package
+
+### Logging
+- Log contract test execution results with package name, test name, and pass/fail status
+- Log CI quality gate evaluations with gate type, threshold, and actual value
+- Log mutation testing results with mutant description, location, and killed/survived status
+
+### Alerting
+- Alert if contract test pass rate drops below 100% for any package (contract violations)
+- Alert if mutation testing score drops below 60% for any package (insufficient test quality)

@@ -207,3 +207,22 @@ Unblocks Volume 9 (CLI reads cost/audit data), Volume 10 (extends this schema wi
 scoping — do not redesign, extend). Vector/semantic retrieval proposed as a future RFC
 once real context-window pressure is observed. Proceeding to Volume 8 (Plugin Platform)
 next, then Volume 9 (CLI Platform), per Volume 1's roadmap ordering.
+
+## Observability Requirements
+
+### Metrics
+- Query latency (p50, p95) — time for conversation state retrieval and persistence operations
+- Database connection pool utilization — percentage of active connections vs pool maximum
+- Audit log write throughput — entries written per second to the audit and cost logs
+- Storage growth rate — daily increase in database size (conversation state, audit entries)
+- Cache hit rate — percentage of state reads served from in-memory cache vs database
+
+### Logging
+- Log all conversation state mutations (create, update, delete) with sessionId and agentId
+- Log audit log entries with actor, action, target resource, and timestamp
+- Log cost log entries with provider, model, token count, and computed cost per interaction
+- Log database connection pool events (checkout, checkin, timeout, eviction)
+
+### Alerting
+- Alert if database connection pool utilization exceeds 80% for more than 2 minutes
+- Alert if query p95 latency exceeds 200ms (indicates potential missing index or table bloat)

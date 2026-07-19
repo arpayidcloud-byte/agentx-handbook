@@ -220,3 +220,21 @@ later). Multi-provider *routing/fallback* (e.g., auto-failover) is explicitly de
 beyond v0.1 — proposed as a future RFC once two adapters are proven stable. Proceeding to
 Volume 7 (Tool SDK) next, per Volume 1's roadmap ordering (needed before Volume 5 can
 define approval gates meaningfully).
+
+## Observability Requirements
+
+### Metrics
+- LLM call latency per provider (p50, p95) — response time for each provider adapter
+- Token cost per provider per day — cumulative spend tracked per adapter
+- Provider error rate — percentage of failed LLM calls per provider (4xx, 5xx, timeout)
+- Request queue depth — number of pending LLM requests waiting for provider response
+- Token usage breakdown (input vs output) — per-call token consumption split
+
+### Logging
+- Log every LLM call with provider name, model, token count, latency, and cost estimate
+- Log provider failover events (when one adapter fails and another is attempted)
+- Log credential resolution events (which credential source was used for each provider call)
+
+### Alerting
+- Alert if any provider's error rate exceeds 10% over a 5-minute window
+- Alert if daily token cost for any provider exceeds the configured budget threshold

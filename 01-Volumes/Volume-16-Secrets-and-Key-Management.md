@@ -601,3 +601,22 @@ Access granted. This event will be reviewed within 24 hours.
   secrets managed by plugin authors with user approval). Secret versioning with rollback
   (store last N versions, not just current). Propose as future RFCs once the plugin
   ecosystem (Volume 8) has real usage data.
+
+## Observability Requirements
+
+### Metrics
+- Secret retrieval latency (p50, p95) — time to decrypt and return a secret to a requesting package
+- Secret rotation success rate — percentage of scheduled rotations completing without error
+- Encryption key age — time since each encryption key was last rotated
+- Secret access count per category — how often each secret category (provider, plugin, identity) is accessed
+- Decryption failure rate — percentage of secret decryption operations that fail
+
+### Logging
+- Log secret access events with requester package, secret category, secret name (not value), and result
+- Log secret rotation events with secret name, old version, new version, and rotation trigger
+- Log encryption key lifecycle events (generated, activated, deprecated, destroyed) with keyId
+- Log credential resolution chain events (which source provided the credential for each request)
+
+### Alerting
+- Alert if any encryption key exceeds its maximum age without rotation (compliance violation)
+- Alert if secret decryption failure rate exceeds 5% over a 5-minute window (key corruption or misconfiguration)

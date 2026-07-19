@@ -150,3 +150,21 @@ Org "acme" | Budget: $500/mo, spent $340
 This is the last Volume in the original 12-Volume map. Two additional Volumes are proposed
 below to close remaining gaps identified during authoring (Volume 1's Recommended
 Additions) and are included in this same delivery.
+
+## Observability Requirements
+
+### Metrics
+- Portfolio-level task completion rate — aggregate success/failure ratio across all projects
+- Cross-team collaboration frequency — number of shared workflows or handoffs between teams
+- Org-level cost aggregation rate — time to compute total cost across all projects
+- Project onboarding time — duration to provision a new project within the org
+- Resource allocation efficiency — ratio of utilized vs reserved resources across projects
+
+### Logging
+- Log org-level workflow orchestration events (started, delegated to project, completed)
+- Log cross-project resource sharing events with source and target project IDs
+- Log portfolio-level cost computation events with breakdown by project
+
+### Alerting
+- Alert if portfolio-level task completion rate drops below 70% over a 24-hour window
+- Alert if org-level cost aggregation takes more than 60 seconds (indicates scaling issue)

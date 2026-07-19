@@ -359,3 +359,20 @@ reasoning, not yet created — awaiting approval before being added to the roadm
 8. **`08-Examples/`** — currently empty; per Constitution Principle 6, this is where
    contract-test templates for each Volume's Interfaces section should live. Recommend
    populating it starting with Volume 2, once approved.
+
+## Observability Requirements
+
+### Metrics
+- Module load time per package (p50, p95) — measures startup performance of each monorepo module
+- Shared type usage count — tracks how many packages import from `shared/shared` and `shared/core-runtime`
+- Document build time — time to generate the full handbook from source
+- Cross-reference integrity score — percentage of valid cross-references between handbook documents
+
+### Logging
+- Log when a new package is registered in the monorepo (package name, Volume assignment, dependencies)
+- Log handbook document status transitions (Draft → Approved → Deprecated)
+- Log version resolution events when packages resolve cross-package type dependencies
+
+### Alerting
+- Alert if any module load time exceeds 500ms (p95), indicating a potential circular dependency or heavy initialization
+- Alert if cross-reference integrity drops below 95%, indicating broken handbook links

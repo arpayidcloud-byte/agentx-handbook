@@ -223,3 +223,22 @@ task and waits for approval event.
 Unblocks Volume 5 (Workflow Engine) which builds the operator-facing approval-gate
 experience on top of this Volume's `task.approval_required` events. Proceeding to
 Volume 5 next, then Volume 6, per Volume 1's roadmap ordering.
+
+## Observability Requirements
+
+### Metrics
+- Tool invocation count per tool — tracks which tools are used most frequently
+- Tool execution latency (p50, p95) — time per tool execution including sandbox overhead
+- Permission denial rate — percentage of tool invocations blocked by the permission model
+- Sandbox resource consumption — CPU and memory usage within tool execution sandboxes
+- Destructive action approval rate — percentage of destructive actions approved vs rejected
+
+### Logging
+- Log every tool invocation with tool name, agentId, parameters (sanitized), and execution result
+- Log permission decisions (allowed/denied) with the reason and applicable policy rule
+- Log sandbox lifecycle events (created, executed, destroyed) with resource limits applied
+- Log destructive action approvals with approver identity and timestamp
+
+### Alerting
+- Alert if permission denial rate exceeds 30% for any single tool (may indicate misconfigured permissions)
+- Alert if sandbox memory usage exceeds 90% of the configured limit (impending OOM)

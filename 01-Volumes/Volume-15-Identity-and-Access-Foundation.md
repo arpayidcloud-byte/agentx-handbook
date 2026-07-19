@@ -610,3 +610,22 @@ const canApprove = await rbacBridge.checkPermission(identity, "task.approve", "a
 - **v2.0 (candidate):** WebAuthn/passkey support (new `IdentityProvider` implementation,
   no interface changes). Adaptive session TTL based on risk signals (unusual IP, new
   device). Propose as a future RFC once v1.0 SSO is proven stable.
+
+## Observability Requirements
+
+### Metrics
+- Authentication latency (p50, p95) — time to validate credentials per auth mode (local, token, SSO)
+- Session creation rate — number of new sessions created per minute
+- Active session count — number of currently valid sessions across all identity providers
+- Authentication failure rate — percentage of failed login attempts per identity source
+- Session invalidation events — count of sessions revoked (manual expiry, logout, security trigger)
+
+### Logging
+- Log authentication attempts with identity source, auth mode, userId (or attempted userId), and result
+- Log session lifecycle events (created, refreshed, invalidated) with sessionId and userId
+- Log identity-to-RBAC bridge evaluations with userId, resolved roles, and source identity provider
+- Log SSO token exchange events with IdP name, token type, and expiry
+
+### Alerting
+- Alert if authentication failure rate exceeds 25% over a 5-minute window (possible brute-force or IdP outage)
+- Alert if session creation rate drops to zero for more than 5 minutes during business hours (auth system down)

@@ -162,3 +162,21 @@ See Chapter 1 for `PluginManifest`.
 Unblocks Volume 9 (CLI needs plugin install/enable commands), Volume 10 (enterprise
 policy may restrict which plugins a tenant can enable), Volume 12 (org-level workflows may
 compose plugin agents). Proceeding to Volume 9 (CLI Platform) next.
+
+## Observability Requirements
+
+### Metrics
+- Plugin installation count — total active plugin installations across all tenants
+- Plugin load time (p50, p95) — time to initialize and register a plugin at startup
+- Plugin error rate — percentage of plugin extension point invocations that fail
+- Extension point invocation frequency — how often each extension point (agent, tool, provider) is used
+- Plugin compatibility score — percentage of plugins compatible with the current core version
+
+### Logging
+- Log plugin lifecycle events (installed, enabled, disabled, updated, uninstalled) with pluginId and version
+- Log extension point registration events (which extension points a plugin provides)
+- Log plugin execution errors with pluginId, extension point, and stack trace
+
+### Alerting
+- Alert if any plugin's error rate exceeds 15% over a 10-minute window
+- Alert if a plugin fails to load during startup (indicates version incompatibility or broken dependency)

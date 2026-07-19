@@ -170,3 +170,21 @@ retry-cap escalation.
 
 Unblocks Volume 9 (CLI needs to render graph state) and Volume 8/12 (org-level workflows
 build on this). Proceeding to Volume 6 (Memory Engine) next.
+
+## Observability Requirements
+
+### Metrics
+- Workflow execution time (p50, p95) — total time from workflow start to completion
+- Approval gate wait time — time tasks spend waiting for human approval at each gate
+- Task graph depth and width — complexity metrics for each workflow's DAG structure
+- Workflow completion rate — percentage of workflows completing successfully vs failing
+- Blocked task count — number of tasks currently waiting on upstream dependencies
+
+### Logging
+- Log workflow lifecycle events (created, started, paused at gate, resumed, completed, failed)
+- Log approval gate events (gate reached, approval requested, approved/rejected, approver identity)
+- Log task graph traversal — which tasks became eligible and were dispatched at each step
+
+### Alerting
+- Alert if any task has been waiting at an approval gate for more than 1 hour (stale approval)
+- Alert if workflow execution time exceeds 3× the historical p95 for the same workflow type

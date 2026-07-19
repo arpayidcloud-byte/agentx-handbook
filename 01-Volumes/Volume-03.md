@@ -242,3 +242,21 @@ attempting `shell.exec.arbitrary` is rejected by Tool SDK.
 Unblocks Volume 5 (Workflow Engine — needs agent roles to route tasks) and Volume 9 (CLI
 Platform — surfaces agent status to the user). Proceeding to Volume 4 (Provider Platform)
 next per Volume 1's roadmap ordering.
+
+## Observability Requirements
+
+### Metrics
+- Agent spawn rate (agents/min) — frequency of new agent instances being created
+- Task completion rate per agent type — success/failure ratio for coding, review, test, and security agents
+- Agent lifecycle duration (p50, p95) — time from agent spawn to completion or termination
+- Decomposer throughput — number of goals decomposed into task graphs per minute
+- Agent resource consumption — memory and CPU usage per active agent instance
+
+### Logging
+- Log agent lifecycle events (spawned, assigned task, completed, failed, terminated) with agentId and type
+- Log Decomposer decisions — which decomposition strategy was selected and the resulting task count
+- Log agent specialist routing decisions (why a task was assigned to a specific agent type)
+
+### Alerting
+- Alert if agent task failure rate exceeds 20% for any agent type over a 5-minute window
+- Alert if no agents have been spawned in 10 minutes during active workflow execution (stall detection)

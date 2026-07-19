@@ -178,3 +178,22 @@ const tenantScopedClient = prisma.$extends({
 
 Unblocks Volume 11 (Cloud Platform needs to know tenant model before deployment topology)
 and Volume 12. Explicitly scheduled after v0.1 (Volumes 1–9) ships and is in real use.
+
+## Observability Requirements
+
+### Metrics
+- Tenant provisioning time — duration to create and configure a new tenant environment
+- RBAC policy evaluation latency (p50, p95) — time to check permissions for a given request
+- Active tenant count — number of tenants with activity in the last 24 hours
+- Cross-tenant isolation violations — count of requests that attempted cross-tenant data access
+- Org policy enforcement events — frequency of policy checks and rejections
+
+### Logging
+- Log tenant lifecycle events (created, suspended, reactivated, deleted) with tenantId
+- Log RBAC decisions (allowed/denied) with userId, roleId, resource, and action
+- Log org policy enforcement events with policy name, affected resource, and outcome
+- Log audit trail for compliance-sensitive operations (data export, user invite, role change)
+
+### Alerting
+- Alert if any cross-tenant isolation violation is detected (immediate severity — data leak risk)
+- Alert if RBAC policy evaluation p95 latency exceeds 50ms (impacting request throughput)

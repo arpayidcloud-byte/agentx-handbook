@@ -155,3 +155,21 @@ services:
 
 Unblocks Volume 12 (org-level workflows need a deployment model to reason about). Explicitly
 sequenced after Volume 10 in priority.
+
+## Observability Requirements
+
+### Metrics
+- Deployment rollout duration — time from deployment trigger to all instances running new version
+- Auto-scaling event frequency — number of scale-up/scale-down events per day
+- Instance health check pass rate — percentage of healthy instances across the fleet
+- Resource utilization (CPU, memory) per instance type — identifies over/under-provisioned nodes
+- Deployment failure rate — percentage of deployments that require rollback
+
+### Logging
+- Log deployment lifecycle events (triggered, in-progress, completed, rolled-back) with version and target
+- Log auto-scaling decisions with trigger metric, threshold, and action taken
+- Log instance health check results with instanceId, check type, and latency
+
+### Alerting
+- Alert if instance health check pass rate drops below 90% for more than 2 minutes
+- Alert if a deployment has not completed within 15 minutes (possible stuck rollout)

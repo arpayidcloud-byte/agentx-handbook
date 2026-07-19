@@ -280,3 +280,21 @@ Volume is Approved (Constitution Principle 6).
 Next Volumes unblocked by this one: Volume 3 (Agent Platform, implements `Decomposer`),
 Volume 4 (Provider Platform), Volume 6 (Memory Engine, implements `Persistence`). Proceeding
 to Volume 3 next per Volume 1's roadmap ordering.
+
+## Observability Requirements
+
+### Metrics
+- Task throughput (tasks/sec) — measures the orchestration kernel's processing capacity
+- Event bus latency (p50, p99) — time from event emission to all subscribers receiving it
+- Scheduler queue depth — number of tasks waiting in the scheduling queue at any point
+- Task lifecycle transition rate — frequency of state changes (PENDING → RUNNING → COMPLETED/FAILED)
+- Event bus subscriber count per topic — detects dead subscriptions or missing handlers
+
+### Logging
+- Log every task lifecycle state transition with taskId, from-state, to-state, and duration in state
+- Log event bus emissions with topic, payload size, and subscriber count
+- Log scheduler decisions (which task was assigned to which worker and why)
+
+### Alerting
+- Alert if scheduler queue depth exceeds 1000 tasks for more than 30 seconds (backpressure indicator)
+- Alert if event bus p99 latency exceeds 500ms (subscribers may be blocking the event loop)
