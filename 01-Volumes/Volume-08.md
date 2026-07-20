@@ -57,7 +57,7 @@ interface PluginManifest {
   declared `ToolCategory` — new categories require the same destructive-classification
   discipline as built-in tools (Volume 7, Ch. 4).
 - **Provider plugin:** implements the `Provider` interface (Volume 4, Ch. 1) — this is how
-  a third vendor or local model gets added without touching `packages/provider-sdk` core.
+  a third vendor or local model gets added without touching `packages/provider/provider-sdk` core.
 
 ### Chapter 3 — Plugin Lifecycle
 

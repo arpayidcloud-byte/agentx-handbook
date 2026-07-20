@@ -4,8 +4,9 @@
 **Paste alongside this prompt:** `01-Volumes/Volume-09.md`
 **Implements:** RFC-0010
 **Package target:** `apps/cli/`
-**Depends on:** all of `packages/core-runtime`, `agent-platform`, `provider-sdk`,
-`workflow-engine`, `memory-engine`, `tool-sdk`, `plugin-sdk`
+**Depends on:** all of `packages/shared/core-runtime`, `packages/agent/agent-platform`,
+`packages/provider/provider-sdk`, `packages/workflow/workflow-engine`,
+`packages/shared/memory-engine`, `packages/shared/tool-sdk`, `packages/plugin-sdk`
 
 ---
 

@@ -24,7 +24,7 @@ Principle 8 (Documentation Required), referenced from Volume 1's Recommended Add
       never an edit to the old one)
 - [ ] Contract test template exists for any new interface (Volume 14, Ch. 1)
 - [ ] No cross-Volume dependency violation introduced (check against Volume 1, Ch. 3 table)
-- [ ] No direct vendor SDK import outside `packages/provider-sdk/providers/*`
+- [ ] No direct vendor SDK import outside `packages/provider/provider-sdk/src/providers/*`
       (Constitution Principle 3)
 - [ ] No credentials logged or included in Event Bus payloads (Volume 4 Ch. 3, Volume 9,
       Volume 13 Ch. 3)

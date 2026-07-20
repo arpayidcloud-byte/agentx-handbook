@@ -3,8 +3,8 @@
 **Use in:** Google AI Studio (Implementation Team role)
 **Paste alongside this prompt:** `01-Volumes/Volume-06.md`
 **Implements:** RFC-0008
-**Package target:** `packages/memory-engine/` + `prisma/schema.prisma`
-**Depends on:** `packages/core-runtime` (implements its `Persistence` interface)
+**Package target:** `packages/shared/memory-engine/` + `prisma/schema.prisma`
+**Depends on:** `packages/shared/core-runtime` (implements its `Persistence` interface)
 
 ---
 

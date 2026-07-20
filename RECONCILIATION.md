@@ -158,13 +158,22 @@ corrected. (Deferred to **Phase 5** after the substantive fixes land.)
 
 ## Decision summary
 
-| ID | Topic | Canonical answer | Direction | Phase |
-|----|-------|------------------|-----------|-------|
-| R-01 | Provider path/scope | `@agentx/provider-sdk` @ `packages/provider/provider-sdk` | handbook ← code | 1 |
-| R-02 | Volume count | 16 Volumes; ADR-0010 superseded | handbook fix | 1 |
-| R-03 | Append-only audit | ADR-0014 only (ADR-0011 = threat model) | clarify | 1/2 |
-| R-04 | Persistence | Real Postgres/Prisma; add migration 001 | code ← handbook | 2 |
-| R-05 | ToolCategory | Volume 7 set canonical; typed union | both | 1/2 |
-| R-06 | RBAC matrix | add `admin`; split `agent`/`operator` | both | 1/2 |
-| R-07 | Dep direction | low→high (Volume 1) canonical | handbook fix | 1 |
-| R-08 | Governance claims | align to reality | handbook fix | 5 |
+| ID | Topic | Canonical answer | Direction | Phase | Handbook status |
+|----|-------|------------------|-----------|-------|-----------------|
+| R-01 | Provider path/scope | `@agentx/provider-sdk` @ `packages/provider/provider-sdk` | handbook ← code | 1 | ✅ done (Phase 1) |
+| R-02 | Volume count | 16 Volumes; ADR-0010 superseded | handbook fix | 1 | ✅ done (Phase 1) |
+| R-03 | Append-only audit | ADR-0014 only (ADR-0011 = threat model) | clarify | 1/2 | ✅ clarified (this doc); code Phase 2 |
+| R-04 | Persistence | Real Postgres/Prisma; add migration 001 | code ← handbook | 2 | n/a — code Phase 2 |
+| R-05 | ToolCategory | Volume 7 set canonical; typed union | both | 1/2 | ✅ handbook done (Phase 1); code Phase 2 |
+| R-06 | RBAC matrix | add `admin`; split `agent`/`operator` | both | 1/2 | ✅ handbook done (Phase 1); code Phase 2 |
+| R-07 | Dep direction | low→high (Volume 1) canonical | handbook fix | 1 | ✅ done (Phase 1) |
+| R-08 | Governance claims | align to reality | handbook fix | 5 | ⏳ Phase 5 |
+
+> **Phase 1 note (2026-07-20):** handbook-side edits for R-01, R-02, R-05, R-06, R-07 are
+> complete. R-01 also expanded to correct the flat `packages/<name>` paths throughout the
+> codegen prompts and Volume 1 layout to the real domain-grouped tree
+> (`packages/shared/…`, `packages/agent/…`, `packages/provider/…`, `packages/workflow/…`).
+> R-06's audit finding was partially stale: the role *list* already had `admin`; only the
+> permission *matrix* was missing it and failed to distinguish `agent` from `operator` —
+> both now fixed. Code-side items (R-03 triggers, R-04 Prisma, R-05 union, R-06 wiring)
+> remain for Phase 2.

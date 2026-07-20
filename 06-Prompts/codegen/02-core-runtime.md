@@ -3,7 +3,7 @@
 **Use in:** Google AI Studio (Implementation Team role, per Constitution role table)
 **Paste alongside this prompt:** the full text of `01-Volumes/Volume-02.md`
 **Implements:** RFC-0001 (n/a here), RFC-0002, RFC-0003, ADR-0001
-**Package target:** `packages/core-runtime/`
+**Package target:** `packages/shared/core-runtime/`
 **Depends on:** nothing (lowest-level implementation package — no other `packages/*` import allowed)
 
 ---
@@ -22,7 +22,7 @@ Isolation requirements.
 2. **Event Driven (Principle 5):** every Task state transition publishes an event — no
    silent transitions.
 3. **Small Stable Core (Principle 10):** this package imports nothing from
-   `packages/agent-platform`, `packages/provider-sdk`, or any other higher-numbered
+   `packages/agent/agent-platform`, `packages/provider/provider-sdk`, or any other higher-numbered
    Volume's package. Where Volume 2 needs behavior from those Volumes (decomposition,
    persistence), implement it as an interface *in this package* that those packages will
    implement later — never as a direct import.
@@ -63,7 +63,7 @@ a later session (Volume 3 / Volume 6 prompts in this same `codegen/` folder).
 
 ## Definition of done for this session
 
-- [ ] All files above exist under `packages/core-runtime/src/`
+- [ ] All files above exist under `packages/shared/core-runtime/src/`
 - [ ] Contract test file passes
 - [ ] No import from any other `packages/*` folder
 - [ ] No vendor LLM SDK import anywhere in this package

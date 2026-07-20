@@ -20,7 +20,7 @@ scaffolding exists, the earlier violations get caught. The golden-set evaluation
    this must be an actual enforced lint rule, not a documented convention people are
    trusted to follow.
 2. **Vendor-import lint (Constitution Principle 3):** a CI rule that fails the build if
-   any file outside `packages/provider-sdk/providers/*` imports a vendor LLM SDK.
+   any file outside `packages/provider/provider-sdk/src/providers/*` imports a vendor LLM SDK.
 3. **Contract-test-presence check (ADR-0009):** CI (or a pre-merge script) verifies a
    `08-Examples/<volume-slug>/contract.test.ts` file exists for every Volume that defines
    an interface — this is the automatable form of "no Volume Approved without a contract

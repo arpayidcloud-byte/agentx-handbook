@@ -62,7 +62,7 @@ interface Provider {
 }
 ```
 
-Every provider implementation (one per vendor) lives in `packages/provider-sdk/providers/*`
+Every provider implementation (one per vendor) lives in `packages/provider/provider-sdk/src/providers/*`
 and is the *only* place a vendor SDK import is permitted (Constitution Principle 3
 enforcement point).
 
@@ -184,7 +184,7 @@ DEFAULT_PROVIDER_ID=anthropic
 DEFAULT_PROVIDER_ID=google
 ```
 
-No code in `packages/agent-platform` or `packages/tool-sdk` changes. Contract test to be
+No code in `packages/agent/agent-platform` or `packages/shared/tool-sdk` changes. Contract test to be
 added at `08-Examples/provider-platform/` asserting both adapters pass an identical test
 suite against the `Provider` interface.
 

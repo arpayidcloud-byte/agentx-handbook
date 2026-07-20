@@ -2,10 +2,10 @@
 
 **Use in:** Google AI Studio (Implementation Team role)
 **Paste alongside this prompt:** `01-Volumes/Volume-03.md`, plus the already-generated
-`packages/core-runtime` (for its `Decomposer`, `Task`, `AgentRole`-adjacent types)
+`packages/shared/core-runtime` (for its `Decomposer`, `Task`, `AgentRole`-adjacent types)
 **Implements:** RFC-0004, RFC-0005, ADR-0002
-**Package target:** `packages/agent-platform/`
-**Depends on:** `packages/core-runtime` only (implements its `Decomposer` interface)
+**Package target:** `packages/agent/agent-platform/`
+**Depends on:** `packages/shared/core-runtime` only (implements its `Decomposer` interface)
 
 ---
 
@@ -27,8 +27,8 @@ per ADR-0002, that requires a new RFC, not a codegen decision.
 4. Agents are stateless — no module-level or instance-level mutable state persists
    between `run()` calls (Volume 3, NFR-2). All state comes from the `TaskContext`
    parameter.
-5. This package imports `packages/core-runtime` only. It does NOT import
-   `packages/provider-sdk` or `packages/tool-sdk` directly — those are consumed via
+5. This package imports `packages/shared/core-runtime` only. It does NOT import
+   `packages/provider/provider-sdk` or `packages/shared/tool-sdk` directly — those are consumed via
    interfaces passed in at construction time (dependency injection), since Provider
    Platform and Tool SDK are implemented in separate later sessions.
 

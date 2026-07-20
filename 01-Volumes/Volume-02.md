@@ -109,7 +109,11 @@ interface DecompositionRequest {
 interface DecomposedTask {
   id: string;
   description: string;
-  assignedAgentRole: AgentRole;   // enum defined in Volume 3
+  assignedAgentRole: string;      // opaque role identifier — the AgentRole enum that
+                                  // constrains valid values is defined in Volume 3 and
+                                  // validated there. Core Runtime must NOT import a
+                                  // Volume 3 type (dependency rule, Volume 1 Ch. 3),
+                                  // so it treats the role as an opaque string.
   dependsOn: string[];            // other DecomposedTask ids
   requiresApproval: boolean;
 }
