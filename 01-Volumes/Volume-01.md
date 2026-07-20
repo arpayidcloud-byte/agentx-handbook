@@ -5,7 +5,7 @@
 **Schema:** `04-Schemas/volume-01.schema.json` added.
 **Governs:** Overall system definition, terminology, module map, and cross-Volume conventions
 **Depends on:** `00-Governance/PROJECT_CONSTITUTION.md`
-**Depended on by:** All other Volumes (2–12)
+**Depended on by:** All other Volumes (2–16)
 
 ---
 
@@ -16,7 +16,7 @@
 2. Establish the system-wide module map and naming conventions used by every subsequent
    Volume, RFC, and ADR.
 3. Define the conventions this handbook itself follows (document status lifecycle,
-   diagram notation, interface notation) so Volumes 2–12 are internally consistent.
+   diagram notation, interface notation) so Volumes 2–16 are internally consistent.
 4. Provide the single source of truth for cross-cutting concerns that do not belong to any
    one module: versioning strategy, monorepo layout, environment strategy.
 
@@ -24,9 +24,9 @@
 
 **In scope for this Volume:**
 - System definition and product boundaries (what problem this platform solves).
-- The 12-module map and how modules relate (ownership boundaries, allowed dependencies).
+- The 16-module map and how modules relate (ownership boundaries, allowed dependencies).
 - Monorepo layout convention (packages/, apps/, shared tooling).
-- Document conventions used across the whole handbook (this governs how Volumes 2–12,
+- Document conventions used across the whole handbook (this governs how Volumes 2–16,
   RFCs, and ADRs are written).
 - Versioning and release strategy at the platform level.
 
@@ -104,6 +104,10 @@ flowchart TB
 | 10 | Enterprise Platform | Multi-tenant, RBAC, audit, compliance | 1–9 |
 | 11 | Cloud Platform | Deployment, scaling, managed-vs-self-hosted | 1–10 |
 | 12 | AI Company OS | Cross-module orchestration for org-level workflows (multi-project, multi-team) | 1–11 |
+| 13 | Observability & SRE | Logging, tracing, metrics for agent runs — cost, latency, failure rate | 1, 2, 4, 6 |
+| 14 | Testing & QA Strategy | Contract-test conventions, agent output evaluation | 1 |
+| 15 | Identity & Access Foundation | Identity sources, authentication, session, identity-to-RBAC bridge | 1 |
+| 16 | Secrets & Key Management | Secret storage, rotation, retrieval, encryption key management | 1, 2 |
 
 **Dependency rule (enforced by Constitution Principle 10 — Small Stable Core):** a lower-
 numbered Volume must never depend on a higher-numbered one. Violations must be resolved by
@@ -111,24 +115,37 @@ renumbering or splitting the Volume, recorded in an ADR.
 
 ### Chapter 4 — Monorepo & Repository Layout
 
+Packages are grouped into domain folders under `packages/` (e.g. `shared/`, `agent/`,
+`provider/`, `workflow/`); each npm package is published under the `@agentx/` scope. The
+Volume→package mapping is:
+
 ```
 agentx/
 ├── apps/
-│   ├── cli/                 # Volume 9
-│   └── enterprise-console/  # Volume 10 (future, web UI)
+│   ├── cli/                          # Volume 9  (@agentx/cli)
+│   └── enterprise-console/           # Volume 10 (future, web UI)
 ├── packages/
-│   ├── core-runtime/        # Volume 2
-│   ├── agent-platform/      # Volume 3
-│   ├── provider-sdk/        # Volume 4
-│   ├── workflow-engine/     # Volume 5
-│   ├── memory-engine/       # Volume 6
-│   ├── tool-sdk/            # Volume 7
-│   ├── plugin-sdk/          # Volume 8
-│   └── shared/              # cross-cutting types, config, logger
-├── prisma/                  # schema.prisma, migrations (Volume 6 owns schema content)
-├── docs/                    # this handbook, mirrored from the authored copy
-└── tooling/                 # eslint, tsconfig base, CI config
+│   ├── shared/
+│   │   ├── core-runtime/             # Volume 2  (@agentx/core-runtime)
+│   │   ├── tool-sdk/                 # Volume 7  (@agentx/tool-sdk)
+│   │   ├── memory-engine/            # Volume 6  (@agentx/memory-engine)
+│   │   └── shared/                   # cross-cutting types, config, logger
+│   ├── agent/
+│   │   └── agent-platform/           # Volume 3  (@agentx/agent-platform)
+│   ├── provider/
+│   │   └── provider-sdk/             # Volume 4  (@agentx/provider-sdk)
+│   │       └── src/providers/*       # the ONLY place vendor SDK imports are permitted
+│   ├── workflow/
+│   │   └── workflow-engine/          # Volume 5  (@agentx/workflow-engine)
+│   └── plugin-sdk/                   # Volume 8  (@agentx/plugin-sdk)
+├── prisma/                           # schema.prisma, migrations (Volume 6 owns schema content)
+├── docs/                             # this handbook, mirrored from the authored copy
+└── tooling/                          # eslint, tsconfig base, CI config
 ```
+
+> The dependency rule (Chapter 3) is defined over the **Volume numbers**, not the on-disk
+> folder grouping — a package's domain folder (`shared/`, `agent/`, …) is an organizational
+> convenience and does not relax the "lower Volume never imports higher Volume" rule.
 
 Stack (already established in prior project work and carried forward here): **Node.js /
 TypeScript, NestJS (service layer), Next.js (any web surface), Prisma, PostgreSQL,
@@ -198,7 +215,7 @@ flowchart LR
     end
 ```
 
-Every Volume 2–12 must open its own Architecture section by declaring, explicitly, which
+Every Volume 2–16 must open its own Architecture section by declaring, explicitly, which
 lower-numbered Volumes it depends on — mirroring the table in Chapter 3.
 
 ## 5. Requirements

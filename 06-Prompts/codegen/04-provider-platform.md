@@ -3,7 +3,7 @@
 **Use in:** Google AI Studio (Implementation Team role)
 **Paste alongside this prompt:** `01-Volumes/Volume-04.md`
 **Implements:** RFC-0001, ADR-0003
-**Package target:** `packages/provider-sdk/`
+**Package target:** `packages/provider/provider-sdk/`
 **Depends on:** nothing (peer to core-runtime; imports no other internal package)
 
 ---
@@ -18,7 +18,7 @@ abstraction actually holds.
 ## Non-negotiable constraints
 
 1. Vendor SDK imports (`@anthropic-ai/sdk`, Google's SDK) are allowed **only** inside
-   `packages/provider-sdk/providers/anthropic/` and `.../providers/google/` respectively.
+   `packages/provider/provider-sdk/src/providers/anthropic/` and `.../src/providers/google/` respectively.
    Nowhere else in this package, and never in any other package.
 2. Both adapters MUST implement the identical `Provider` interface (Volume 4, Ch. 1) and
    pass an identical contract test suite (Ch. 8 / ADR-0003).

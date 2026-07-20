@@ -9,7 +9,7 @@ audit/cost data rather than adding new application behavior.
 **Paste alongside this prompt:** `01-Volumes/Volume-13.md`
 **Implements:** RFC-0017
 **Package target:** `packages/observability/`
-**Depends on:** `packages/memory-engine` only (queries existing `AuditEvent`/`CostRecord` data)
+**Depends on:** `packages/shared/memory-engine` only (queries existing `AuditEvent`/`CostRecord` data)
 
 ---
 

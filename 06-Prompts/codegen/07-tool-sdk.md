@@ -3,8 +3,8 @@
 **Use in:** Google AI Studio (Implementation Team role)
 **Paste alongside this prompt:** `01-Volumes/Volume-07.md`
 **Implements:** RFC-0006, ADR-0004, ADR-0005
-**Package target:** `packages/tool-sdk/`
-**Depends on:** `packages/core-runtime` (for `Scheduler.pause/resume`), `packages/agent-platform` (for `AgentRole` type only)
+**Package target:** `packages/shared/tool-sdk/`
+**Depends on:** `packages/shared/core-runtime` (for `Scheduler.pause/resume`), `packages/agent/agent-platform` (for `AgentRole` type only)
 
 ---
 

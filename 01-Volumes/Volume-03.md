@@ -73,7 +73,13 @@ change, because it affects the trust boundary (which tools which agent may touch
 ```typescript
 interface AgentDefinition {
   role: AgentRole;
-  allowedToolCategories: ToolCategory[];   // Volume 7 taxonomy
+  allowedToolCategories: string[];         // tool-category identifiers. The canonical
+                                          // ToolCategory taxonomy is owned and validated
+                                          // by Volume 7; Agent Platform (Volume 3) must
+                                          // NOT import a Volume 7 type (dependency rule,
+                                          // Volume 1 Ch. 3), so it holds the categories
+                                          // as opaque strings and defers validation to
+                                          // Tool SDK at call time.
   systemPromptTemplateId: string;          // resolved via Volume 6 or static config
 }
 
@@ -184,7 +190,10 @@ interface AgentResult {
   taskId: string;
   role: AgentRole;
   output: string;
-  toolCallsMade: ToolCallRecord[];   // Volume 7 type
+  // A summary of tool calls the agent made. The authoritative ToolCallRecord shape is
+  // defined in Volume 7; since Volume 3 must not import a higher-numbered Volume's type
+  // (Volume 1 Ch. 3), it references calls structurally rather than by the Volume 7 type.
+  toolCallsMade: Array<{ toolName: string; category: string; approved: boolean }>;
   requiresApproval: boolean;
 }
 
@@ -201,13 +210,13 @@ interface Agent {
 ```json
 {
   "role": "coding",
-  "allowedToolCategories": ["fs.read", "fs.write", "shell.build", "shell.lint"],
+  "allowedToolCategories": ["fs.read", "fs.write", "shell.build"],
   "systemPromptTemplateId": "coding-agent-v1"
 }
 ```
 
 Contract test to be added at `08-Examples/agent-platform/` asserting a Coding Agent
-attempting `shell.exec.arbitrary` is rejected by Tool SDK.
+attempting `shell.exec` (arbitrary shell execution) is rejected by Tool SDK.
 
 ## 9. Risks
 

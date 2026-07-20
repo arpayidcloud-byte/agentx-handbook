@@ -4,7 +4,7 @@
 **Paste alongside this prompt:** `01-Volumes/Volume-08.md`
 **Implements:** RFC-0009
 **Package target:** `packages/plugin-sdk/`
-**Depends on:** `packages/agent-platform`, `packages/tool-sdk`, `packages/provider-sdk` (registers into their registries — does not modify their internals)
+**Depends on:** `packages/agent/agent-platform`, `packages/shared/tool-sdk`, `packages/provider/provider-sdk` (registers into their registries — does not modify their internals)
 
 ---
 

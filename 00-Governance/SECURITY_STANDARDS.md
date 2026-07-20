@@ -100,11 +100,24 @@
 ### 4.3 Permission Matrix (Tool Categories)
 | Role | fs.read | fs.write | shell.build | shell.exec | git.read | git.write |
 |------|---------|----------|-------------|------------|----------|-----------|
+| admin | ✅ | ✅ (approval) | ✅ | ✅ (approval) | ✅ | ✅ (approval) |
 | operator | ✅ | ✅ (approval) | ✅ | ✅ (approval) | ✅ | ✅ (approval) |
-| agent | ✅ | ✅ (approval) | ✅ | ✅ (approval) | ✅ | ✅ (approval) |
+| agent | ✅ | ✅ (approval) | ✅ | ❌ | ✅ | ❌ |
 | viewer | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
 
 > `✅ (approval)` means the action requires explicit operator approval per Volume 07.
+>
+> **Role distinctions (least privilege):**
+> - **`admin`** and **`operator`** are human roles with identical *tool-category* rights;
+>   they differ outside this matrix — `admin` additionally manages users, roles, and
+>   platform configuration, whereas `operator` only runs tasks. Destructive categories
+>   remain approval-gated for both (approval is a safety gate, not a privilege bypass).
+> - **`agent`** is a system role and is strictly more restricted than `operator`: it can
+>   never invoke arbitrary `shell.exec` or `git.write`. These are denied outright (`❌`),
+>   not merely approval-gated, so a prompt-injected agent cannot request them at all. This
+>   mirrors Volume 3 / Volume 7 (a Coding Agent's `allowedToolCategories` excludes
+>   `git.write`). Agent write access is limited to `fs.write` (approval-gated) and
+>   allowlisted `shell.build`.
 
 ---
 

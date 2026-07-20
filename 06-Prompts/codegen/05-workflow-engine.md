@@ -3,8 +3,8 @@
 **Use in:** Google AI Studio (Implementation Team role)
 **Paste alongside this prompt:** `01-Volumes/Volume-05.md`
 **Implements:** RFC-0007
-**Package target:** `packages/workflow-engine/`
-**Depends on:** `packages/core-runtime`, `packages/agent-platform`, `packages/tool-sdk`
+**Package target:** `packages/workflow/workflow-engine/`
+**Depends on:** `packages/shared/core-runtime`, `packages/agent/agent-platform`, `packages/shared/tool-sdk`
 
 ---
 

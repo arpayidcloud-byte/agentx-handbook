@@ -57,8 +57,8 @@ rewriting the orchestrator. All provider access goes through the Provider Platfo
 (Volume 4) behind a normalized interface.
 
 **Enforcement:**
-- Core packages may depend on `@platform/provider-sdk` (internal abstraction) only.
-- Any direct import of a vendor SDK outside `packages/providers/*` fails CI lint.
+- Core packages may depend on `@agentx/provider-sdk` (internal abstraction) only.
+- Any direct import of a vendor SDK outside `packages/provider/provider-sdk/src/providers/*` fails CI lint.
 
 ---
 
